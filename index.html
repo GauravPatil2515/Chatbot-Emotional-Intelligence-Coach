@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EQ Coach</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:#0d0d1a;color:#ddd;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px}
+h1{color:#8b7cf7;font-size:28px;margin-bottom:4px}
+.sub{color:#666;font-size:14px;margin-bottom:16px}
+video{width:220px;height:165px;border-radius:10px;border:2px solid #8b7cf7;background:#111;object-fit:cover;margin-bottom:6px}
+.cl{font-size:11px;color:#555;margin-bottom:16px}
+.box{width:100%;max-width:480px}
+textarea{width:100%;height:70px;background:#161628;color:#ddd;border:1px solid #2a2a40;border-radius:8px;padding:10px;font-size:14px;resize:none;font-family:inherit}
+textarea:focus{outline:none;border-color:#8b7cf7}
+button{width:100%;margin-top:8px;padding:10px;background:#8b7cf7;color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer;font-family:inherit;transition:background .2s}
+button:hover{background:#7a6be0}
+button:disabled{opacity:.5;cursor:wait}
+#out{margin-top:16px;background:#161628;border-radius:8px;padding:14px;white-space:pre-wrap;line-height:1.6;min-height:50px;font-size:14px;border:1px solid #2a2a40}
+.hdr{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.dot{width:10px;height:10px;border-radius:50%;background:#4caf50;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+</head>
+<body>
+<div class="hdr"><h1>EQ Coach</h1><span class="dot"></span></div>
+<p class="sub">Emotional Intelligence Coaching</p>
+<video id="vid" autoplay muted playsinline></video>
+<p class="cl">Self-awareness mirror</p>
+<div class="box">
+<textarea id="inp" placeholder="How are you feeling? Describe a social situation you need help with..."></textarea>
+<button id="btn" onclick="go()">Analyze &amp; Coach</button>
+<div id="out">Share your thoughts and I'll provide personalized emotional coaching.</div>
+</div>
+<script>
+navigator.mediaDevices.getUserMedia({video:{facingMode:"user",width:220}}).then(function(s){document.getElementById("vid").srcObject=s}).catch(function(){});
+async function go(){
+var b=document.getElementById("btn"),o=document.getElementById("out"),d=document.getElementById("inp").value;
+b.disabled=true;b.textContent="Analyzing...";o.textContent="Reading your emotional state...";
+try{var r=await fetch("/solve",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:d})});var j=await r.json();o.textContent=j.output}catch(e){o.textContent="Connection error. Please try again."}
+b.disabled=false;b.textContent="Analyze \u0026 Coach"}
+</script>
+</body>
+</html>
